@@ -1,10 +1,10 @@
 import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
-const LoginScreen = () => {
+const LoginScreen = (props) => {
     return (
         <View>
-            <Text></Text>
+            <Text>Login</Text>
         </View>
     )
 }

@@ -1,14 +1,14 @@
 import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
-const CategoriesSelection = () => {
+const CategoriesSelectionScreen = (props) => {
     return (
         <View>
-            <Text></Text>
+            <Text>Categories Selection</Text>
         </View>
     )
 }
 
-export default CategoriesSelection
+export default CategoriesSelectionScreen
 
 const styles = StyleSheet.create({})
