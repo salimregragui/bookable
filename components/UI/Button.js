@@ -17,7 +17,7 @@ const Button = (props) => {
     }
 
     return (
-        <TouchableCmp activeOpacity={0.8}>
+        <TouchableCmp activeOpacity={0.8} onPress={props.onPress}>
             <View style={{...styles.button, ...props.style}}>
                 <Text style={{...styles.text, ...props.styleText}}>{props.children}</Text>
             </View>

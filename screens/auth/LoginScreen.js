@@ -1,8 +1,8 @@
 import React from "react";
-import { StyleSheet, Text, View, TextInput, ScrollView } from "react-native";
+import { StyleSheet, Text, View, ScrollView } from "react-native";
 
 import Input from "../../components/UI/Input";
-import Button from '../../components/UI/Button';
+import Button from "../../components/UI/Button";
 import { Colors } from "../../constants/Colors";
 
 const LoginScreen = (props) => {
@@ -23,7 +23,7 @@ const LoginScreen = (props) => {
             <View style={styles.inputsContainer}>
                 <Input
                     keyboardType="email-address"
-                    placeholder="Email Adress"
+                    placeholder="Email Address"
                     placeholderTextColor={Colors.lightTheme.grey}
                 />
                 <Input
@@ -31,9 +31,33 @@ const LoginScreen = (props) => {
                     placeholder="Password"
                     placeholderTextColor={Colors.lightTheme.grey}
                 />
-                
-                <Button>
+
+                <Button
+                    onPress={() => {
+                        console.log("hey !");
+                    }}
+                >
                     Login
+                </Button>
+
+                <Button
+                    style={styles.forgotPass}
+                    styleText={styles.forgotPassText}
+                    onPress={() => {
+                        console.log("pass !");
+                    }}
+                >
+                    Forgot your password ?
+                </Button>
+
+                <Button
+                    style={styles.signUp}
+                    styleText={styles.signUpText}
+                    onPress={() => {
+                        props.navigation.replace('SignUp');
+                    }}
+                >
+                    Sign Up
                 </Button>
             </View>
         </ScrollView>
@@ -65,6 +89,24 @@ const styles = StyleSheet.create({
     infos: {
         fontFamily: "poppins",
         color: Colors.lightTheme.grey,
+    },
+    forgotPass: {
+        backgroundColor: "white",
+        marginVertical: 0,
+        height: 40,
+    },
+    forgotPassText: {
+        color: Colors.lightTheme.secondaryColor,
+    },
+    signUp: {
+        marginTop: 80,
+        backgroundColor: "white",
+        borderRadius: 5,
+        borderColor: Colors.lightTheme.secondaryColor,
+        borderWidth: 2,
+    },
+    signUpText: {
+        color: Colors.lightTheme.secondaryColor,
     },
 });
 

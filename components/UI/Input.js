@@ -15,7 +15,9 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         marginVertical: 15,
         paddingHorizontal: 15,
-        color: Colors.lightTheme.grey
+        color: Colors.lightTheme.grey,
+        fontFamily: 'poppins',
+        paddingTop: 3
     }
 });
 

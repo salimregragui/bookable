@@ -1,5 +1,5 @@
 import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createStackNavigator, CardStyleInterpolators } from "@react-navigation/stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import React from "react";
 
@@ -12,17 +12,21 @@ const AuthNavigatorStack = createStackNavigator();
 const MyTheme = {
     ...DefaultTheme,
     colors: {
-      ...DefaultTheme.colors,
-      background: 'white'
+        ...DefaultTheme.colors,
+        background: "white",
     },
-  };
+};
 
 export default function GlobalNavigator() {
     return (
         <NavigationContainer theme={MyTheme}>
             <AuthNavigatorStack.Navigator
                 initialRouteName="Login"
-                screenOptions={{ headerShown: false }}
+                screenOptions={{
+                    headerShown: false,
+                    cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+                }}
+                mode="card"
             >
                 <AuthNavigatorStack.Screen name="Login" component={LoginScreen} />
                 <AuthNavigatorStack.Screen name="SignUp" component={SignUpScreen} />
