@@ -1,11 +1,31 @@
-import React from "react";
+import React, { useState } from "react";
+import { useDispatch } from 'react-redux';
 import { StyleSheet, Text, View, ScrollView } from "react-native";
 
 import Input from "../../components/UI/Input";
 import Button from "../../components/UI/Button";
 import { Colors } from "../../constants/Colors";
 
+import * as authActions from '../../store/actions/auth';
+
 const LoginScreen = (props) => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
+    const dispatch = useDispatch();
+
+    const emailChangeHandler = (text) => {
+        setEmail(text);
+    }
+
+    const passwordChangeHandler = (text) => {
+        setPassword(text);
+    }
+
+    const formHandler = () => {
+        dispatch(authActions.login(email, password));
+    }
+
     return (
         <ScrollView style={styles.screen}>
             <View style={styles.titleContainer}>
@@ -25,18 +45,20 @@ const LoginScreen = (props) => {
                     keyboardType="email-address"
                     placeholder="Email Address"
                     placeholderTextColor={Colors.lightTheme.grey}
+                    value={email}
+                    onChangeText={emailChangeHandler}
+                    autoCapitalize='none'
                 />
                 <Input
                     secureTextEntry
                     placeholder="Password"
                     placeholderTextColor={Colors.lightTheme.grey}
+                    value={password}
+                    onChangeText={passwordChangeHandler}
+                    autoCapitalize='none'
                 />
 
-                <Button
-                    onPress={() => {
-                        console.log("hey !");
-                    }}
-                >
+                <Button onPress={formHandler} >
                     Login
                 </Button>
 
