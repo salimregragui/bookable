@@ -1,4 +1,4 @@
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import React from "react";
@@ -9,9 +9,17 @@ import CategoriesSelectionScreen from "../screens/auth/CategoriesSelectionScreen
 
 const AuthNavigatorStack = createStackNavigator();
 
+const MyTheme = {
+    ...DefaultTheme,
+    colors: {
+      ...DefaultTheme.colors,
+      background: 'white'
+    },
+  };
+
 export default function GlobalNavigator() {
     return (
-        <NavigationContainer>
+        <NavigationContainer theme={MyTheme}>
             <AuthNavigatorStack.Navigator
                 initialRouteName="Login"
                 screenOptions={{ headerShown: false }}
