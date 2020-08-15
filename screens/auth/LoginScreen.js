@@ -24,6 +24,7 @@ const LoginScreen = (props) => {
 
     const formHandler = () => {
         dispatch(authActions.login(email, password));
+        props.navigation.replace('Drawer');
     }
 
     return (
