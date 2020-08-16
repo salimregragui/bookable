@@ -2,9 +2,9 @@ import React from "react";
 import { StyleSheet, Text, View, Image, ScrollView, FlatList } from "react-native";
 import Header from "../../components/UI/Header";
 import { Colors } from "../../constants/Colors";
-import Button from "../../components/UI/Button";
-import { Ionicons } from "@expo/vector-icons";
 import BookListItem from "../../components/BooksListItem";
+
+import TitleBar from "../../components/UI/TitleBar";
 
 const ProfileScreen = (props) => {
     const data = [
@@ -49,105 +49,136 @@ const ProfileScreen = (props) => {
     ];
 
     const bookListItemClickHandler = (id) => {
-        props.navigation.navigate('BookDetails', {
-            'bookInfos': {...data[id]}
+        props.navigation.navigate("BookDetails", {
+            bookInfos: { ...data[id] },
         });
-    }
+    };
 
     return (
-        <ScrollView style={styles.bookDetails}>
-            <Header title="Profile" navigation={props.navigation} noHeaderRight />
+        <View style={styles.avoidStatusBar}>
+            <ScrollView style={styles.bookDetails}>
+                <Header title="Profile" navigation={props.navigation} noHeaderRight marginTop={5} />
 
-            <View style={styles.imageContainer}>
-                <View style={styles.shadowImage}>
-                    <Image style={styles.image} source={require("../../assets/32.jpg")} />
+                <View style={styles.imageContainer}>
+                    <View style={styles.shadowImage}>
+                        <Image style={styles.image} source={require("../../assets/32.jpg")} />
+                    </View>
+                    <View style={styles.profileInfos}>
+                        <Text style={styles.name}>Salim Regragui</Text>
+                        <Text style={styles.address}>Rabat, Morocco</Text>
+                        <Text style={styles.since}>Member since 2018</Text>
+                    </View>
                 </View>
-                <View style={styles.profileInfos}>
-                    <Text style={styles.name}>Salim Regragui</Text>
-                    <Text style={styles.address}>Rabat, Morocco</Text>
-                    <Text style={styles.since}>Member since 2018</Text>
-                </View>
-            </View>
 
-            <View style={styles.technicalInfos}>
-                <View style={styles.technicalInfo}>
-                    <Text style={styles.technicalInfoName}>Books Read</Text>
-                    <Text style={styles.technicalInfoContent}>214</Text>
+                <View style={styles.technicalInfos}>
+                    <View style={styles.technicalInfo}>
+                        <Text style={styles.technicalInfoName}>Books Read</Text>
+                        <Text style={styles.technicalInfoContent}>214</Text>
+                    </View>
+                    <View style={styles.technicalInfo}>
+                        <Text style={styles.technicalInfoName}>Books Reviewed</Text>
+                        <Text style={styles.technicalInfoContent}>180</Text>
+                    </View>
+                    <View style={styles.technicalInfo}>
+                        <Text style={styles.technicalInfoName}>Followers</Text>
+                        <Text style={styles.technicalInfoContent}>1.20 k</Text>
+                    </View>
                 </View>
-                <View style={styles.technicalInfo}>
-                    <Text style={styles.technicalInfoName}>Books Reviewed</Text>
-                    <Text style={styles.technicalInfoContent}>180</Text>
-                </View>
-                <View style={styles.technicalInfo}>
-                    <Text style={styles.technicalInfoName}>Followers</Text>
-                    <Text style={styles.technicalInfoContent}>1.20 k</Text>
-                </View>
-            </View>
-            
-            <View style={styles.profileData}>
-                <Text style={styles.title}>Currently Reading</Text>
-                <View style={styles.flatListContainer}>
-                    <FlatList
-                        style={styles.bookList}
-                        showsHorizontalScrollIndicator={false}
-                        data={data}
-                        renderItem={(itemData) => (
-                            <BookListItem
-                                title={itemData.item.title}
-                                author={itemData.item.author}
-                                imageUri={itemData.item.imageUri}
-                                progress={itemData.item.progress}
-                                hasProgress
-                                onPress={() => {bookListItemClickHandler(itemData.index)}}
-                            />
-                        )}
-                        horizontal={true}
+
+                <View style={styles.profileData}>
+                    <TitleBar
+                        title="Currently Reading"
+                        hasRight
+                        rightText="More"
+                        rightClick={() => {
+                            props.navigation.navigate("CurrentlyReading");
+                        }}
                     />
-                </View>
+                    <View style={styles.flatListContainer}>
+                        <FlatList
+                            style={styles.bookList}
+                            showsHorizontalScrollIndicator={false}
+                            data={data}
+                            renderItem={(itemData) => (
+                                <BookListItem
+                                    title={itemData.item.title}
+                                    author={itemData.item.author}
+                                    imageUri={itemData.item.imageUri}
+                                    progress={itemData.item.progress}
+                                    hasProgress
+                                    onPress={() => {
+                                        bookListItemClickHandler(itemData.index);
+                                    }}
+                                />
+                            )}
+                            horizontal={true}
+                        />
+                    </View>
 
-                <Text style={styles.title}>Favorite Books</Text>
-                <View style={styles.flatListContainer}>
-                    <FlatList
-                        style={styles.bookList}
-                        showsHorizontalScrollIndicator={false}
-                        data={data}
-                        renderItem={(itemData) => (
-                            <BookListItem
-                                title={itemData.item.title}
-                                author={itemData.item.author}
-                                imageUri={itemData.item.imageUri}
-                                progress={itemData.item.progress}
-                                hasProgress
-                                onPress={() => {bookListItemClickHandler(itemData.index)}}
-                            />
-                        )}
-                        horizontal={true}
+                    <TitleBar
+                        title="Favorite Books"
+                        hasRight
+                        rightText="All"
+                        rightClick={() => {
+                            props.navigation.navigate("Favorites");
+                        }}
                     />
-                </View>
+                    <View style={styles.flatListContainer}>
+                        <FlatList
+                            style={styles.bookList}
+                            showsHorizontalScrollIndicator={false}
+                            data={data}
+                            renderItem={(itemData) => (
+                                <BookListItem
+                                    title={itemData.item.title}
+                                    author={itemData.item.author}
+                                    imageUri={itemData.item.imageUri}
+                                    progress={itemData.item.progress}
+                                    hasProgress
+                                    onPress={() => {
+                                        bookListItemClickHandler(itemData.index);
+                                    }}
+                                />
+                            )}
+                            horizontal={true}
+                        />
+                    </View>
 
-                <Text style={styles.title}>Reviewed Books</Text>
-                <View style={styles.flatListContainer}>
-                    <FlatList
-                        style={styles.bookList}
-                        showsHorizontalScrollIndicator={false}
-                        data={data}
-                        renderItem={(itemData) => (
-                            <BookListItem
-                                title={itemData.item.title}
-                                author={itemData.item.author}
-                                imageUri={itemData.item.imageUri}
-                                onPress={() => {bookListItemClickHandler(itemData.index)}}
-                            />
-                        )}
-                        horizontal={true}
+                    <TitleBar
+                        title="Reviewed Books"
+                        hasRight
+                        rightText="All"
+                        rightClick={() => {}}
                     />
+                    <View style={styles.flatListContainer}>
+                        <FlatList
+                            style={styles.bookList}
+                            showsHorizontalScrollIndicator={false}
+                            data={data}
+                            renderItem={(itemData) => (
+                                <BookListItem
+                                    title={itemData.item.title}
+                                    author={itemData.item.author}
+                                    imageUri={itemData.item.imageUri}
+                                    onPress={() => {
+                                        bookListItemClickHandler(itemData.index);
+                                    }}
+                                />
+                            )}
+                            horizontal={true}
+                        />
+                    </View>
                 </View>
-            </View>
-        </ScrollView>
+            </ScrollView>
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
+    avoidStatusBar: {
+        flex: 1,
+        marginTop: 25,
+    },
     bookDetails: {
         flex: 1,
     },
@@ -203,7 +234,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        marginTop: 30
+        marginTop: 30,
     },
     technicalInfo: {
         marginHorizontal: 20,
@@ -212,7 +243,7 @@ const styles = StyleSheet.create({
     technicalInfoName: {
         fontFamily: "poppins-medium",
         fontSize: 12,
-        color: 'white',
+        color: "white",
         marginTop: 6,
     },
     technicalInfoContent: {
@@ -220,12 +251,7 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: "white",
     },
-    title: {
-        fontFamily: "poppins-bold",
-        color: Colors.lightTheme.primaryColor,
-        fontSize: 18,
-    },
-    bookList: {
+    List: {
         marginTop: 5,
     },
     flatListContainer: {
@@ -234,8 +260,8 @@ const styles = StyleSheet.create({
     },
     profileData: {
         marginLeft: 20,
-        marginTop: 30
-    }
+        marginTop: 30,
+    },
 });
 
 export default ProfileScreen;

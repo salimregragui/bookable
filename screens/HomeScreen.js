@@ -4,6 +4,7 @@ import { ScrollView, StyleSheet, Text, View, FlatList } from "react-native";
 import Header from "../components/UI/Header";
 import { Colors } from "../constants/Colors";
 import BookListItem from "../components/BooksListItem";
+import TitleBar from "../components/UI/TitleBar";
 
 const HomeScreen = (props) => {
     const data = [
@@ -48,81 +49,107 @@ const HomeScreen = (props) => {
     ];
 
     const bookListItemClickHandler = (id) => {
-        props.navigation.navigate('BookDetails', {
-            'bookInfos': {...data[id]}
+        props.navigation.navigate("BookDetails", {
+            bookInfos: { ...data[id] },
         });
-    }
-
+    };
 
     return (
-        <ScrollView style={styles.home}>
-            <Header title="Home" navigation={props.navigation} />
+        <View style={styles.avoidStatusBar}>
+            <ScrollView style={styles.home}>
+                <Header title="Home" navigation={props.navigation} marginTop={5} />
 
-            <View style={styles.homeContent}>
-                <Text style={styles.title}>Continue Reading</Text>
-                <View style={styles.flatListContainer}>
-                    <FlatList
-                        style={styles.bookList}
-                        showsHorizontalScrollIndicator={false}
-                        data={data}
-                        renderItem={(itemData) => (
-                            <BookListItem
-                                title={itemData.item.title}
-                                author={itemData.item.author}
-                                imageUri={itemData.item.imageUri}
-                                progress={itemData.item.progress}
-                                hasProgress
-                                onPress={() => {bookListItemClickHandler(itemData.index)}}
-                            />
-                        )}
-                        horizontal={true}
+                <View style={styles.homeContent}>
+                    <TitleBar
+                        title="Continue Reading"
+                        hasRight
+                        rightText="All"
+                        rightClick={() => {
+                            props.navigation.navigate("ProfileNavigator", {
+                                screen: "CurrentlyReading",
+                            });
+                        }}
                     />
-                </View>
+                    <View style={styles.flatListContainer}>
+                        <FlatList
+                            style={styles.bookList}
+                            showsHorizontalScrollIndicator={false}
+                            data={data}
+                            renderItem={(itemData) => (
+                                <BookListItem
+                                    title={itemData.item.title}
+                                    author={itemData.item.author}
+                                    imageUri={itemData.item.imageUri}
+                                    progress={itemData.item.progress}
+                                    hasProgress
+                                    onPress={() => {
+                                        bookListItemClickHandler(itemData.index);
+                                    }}
+                                />
+                            )}
+                            horizontal={true}
+                        />
+                    </View>
 
-                <Text style={styles.title}>Trending Books</Text>
-                <View style={styles.flatListContainer}>
-                    <FlatList
-                        style={styles.bookList}
-                        showsHorizontalScrollIndicator={false}
-                        data={data}
-                        renderItem={(itemData) => (
-                            <BookListItem
-                                title={itemData.item.title}
-                                author={itemData.item.author}
-                                imageUri={itemData.item.imageUri}
-                                onPress={() => {bookListItemClickHandler(itemData.index)}}
-                            />
-                        )}
-                        horizontal={true}
-                    />
-                </View>
+                    <TitleBar title="Trending Books" />
+                    <View style={styles.flatListContainer}>
+                        <FlatList
+                            style={styles.bookList}
+                            showsHorizontalScrollIndicator={false}
+                            data={data}
+                            renderItem={(itemData) => (
+                                <BookListItem
+                                    title={itemData.item.title}
+                                    author={itemData.item.author}
+                                    imageUri={itemData.item.imageUri}
+                                    onPress={() => {
+                                        bookListItemClickHandler(itemData.index);
+                                    }}
+                                />
+                            )}
+                            horizontal={true}
+                        />
+                    </View>
 
-                <Text style={styles.title}>Best Of Fantasy</Text>
-                <View style={styles.flatListContainer}>
-                    <FlatList
-                        style={styles.bookList}
-                        showsHorizontalScrollIndicator={false}
-                        data={data}
-                        renderItem={(itemData) => (
-                            <BookListItem
-                                title={itemData.item.title}
-                                author={itemData.item.author}
-                                imageUri={itemData.item.imageUri}
-                                onPress={() => {}}
-                                onPress={() => {bookListItemClickHandler(itemData.index)}}
-                            />
-                        )}
-                        horizontal={true}
+                    <TitleBar
+                        title="Best Of Fantasy"
+                        hasRight
+                        rightText="All"
+                        rightClick={() => {}}
                     />
+                    <View style={styles.flatListContainer}>
+                        <FlatList
+                            style={styles.bookList}
+                            showsHorizontalScrollIndicator={false}
+                            data={data}
+                            renderItem={(itemData) => (
+                                <BookListItem
+                                    title={itemData.item.title}
+                                    author={itemData.item.author}
+                                    imageUri={itemData.item.imageUri}
+                                    onPress={() => {}}
+                                    onPress={() => {
+                                        bookListItemClickHandler(itemData.index);
+                                    }}
+                                />
+                            )}
+                            horizontal={true}
+                        />
+                    </View>
                 </View>
-            </View>
-        </ScrollView>
+            </ScrollView>
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
+    avoidStatusBar: {
+        flex: 1,
+        marginTop: 25,
+    },
     home: {
         flex: 1,
+        zIndex: 1000,
     },
     homeContent: {
         flex: 1,

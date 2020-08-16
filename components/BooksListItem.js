@@ -4,9 +4,9 @@ import { Colors } from "../constants/Colors";
 
 const BooksListItem = (props) => {
     return (
-        <View style={styles.BooksListItem}>
+        <View style={props.isVertical ? styles.BooksListItemVertical : styles.BooksListItem}>
             <TouchableOpacity activeOpacity={0.8} onPress={props.onPress}>
-                <View style={styles.imageContainer}>
+                <View style={props.isVertical ? styles.imageContainerVertical : styles.imageContainer}>
                     <Image
                         style={styles.image}
                         source={{
@@ -16,7 +16,7 @@ const BooksListItem = (props) => {
                 </View>
             </TouchableOpacity>
 
-            <View style={styles.BookInfos}>
+            <View style={styles.bookInfos}>
                 <Text style={styles.title}>{props.title}</Text>
                 <Text style={styles.author}>{props.author}</Text>
             </View>
@@ -30,10 +30,15 @@ const BooksListItem = (props) => {
 
 const styles = StyleSheet.create({
     BooksListItem: {
-        marginRight: 30,
         width: 120,
-        height: 250,
- 
+        height: 280,
+        marginRight: 30,
+    },
+    BooksListItemVertical: {
+        marginRight: 20,
+        marginBottom: 50,
+        width: 90,
+        height: 180
     },
     imageContainer: {
         width: 120,
@@ -44,10 +49,22 @@ const styles = StyleSheet.create({
         shadowOpacity: 1,
         elevation: 8,
     },  
+    imageContainerVertical: {
+        width: 90,
+        height: 140,
+        borderRadius: 5,
+        shadowOffset: { width: 10, height: 10 },
+        shadowColor: "#000",
+        shadowOpacity: 1,
+        elevation: 8,
+    },
     image: {
         width: '100%',
         height: '100%',
         borderRadius: 5,
+    },
+    bookInfos: {
+        marginTop: 5
     },
     title: {
         fontFamily: 'poppins-bold',
@@ -64,7 +81,8 @@ const styles = StyleSheet.create({
         width: '100%',
         height: 6,
         backgroundColor: '#e3e3e9',
-        borderRadius: 6
+        borderRadius: 6,
+        marginTop: 5
     },
     progressBarAdvancement: {
         height: '100%',

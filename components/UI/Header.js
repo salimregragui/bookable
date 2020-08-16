@@ -33,7 +33,7 @@ const Header = (props) => {
         );
     }
     return (
-        <View style={styles.Header}>
+        <View style={{...styles.Header, marginTop: props.marginTop ? props.marginTop : 30}}>
             <View style={styles.headerLeftStyle}>
                 {headerLeft}
                 <Text style={styles.title}>{props.title}</Text>
@@ -44,7 +44,10 @@ const Header = (props) => {
                     <TouchableOpacity
                         activeOpacity={0.8}
                         onPress={() => {
-                            props.navigation.navigate("ProfileNavigator", { screen: "Profile" });
+                            props.navigation.navigate("ProfileNavigator", {
+                                screen: "Profile",
+                                initial: true,
+                            });
                         }}
                     >
                         <ImageBackground
