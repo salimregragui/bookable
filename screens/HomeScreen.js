@@ -46,6 +46,14 @@ const HomeScreen = (props) => {
             progress: 5,
         },
     ];
+
+    const bookListItemClickHandler = (id) => {
+        props.navigation.navigate('BookDetails', {
+            'bookInfos': {...data[id]}
+        });
+    }
+
+
     return (
         <ScrollView style={styles.home}>
             <Header title="Home" navigation={props.navigation} />
@@ -64,6 +72,7 @@ const HomeScreen = (props) => {
                                 imageUri={itemData.item.imageUri}
                                 progress={itemData.item.progress}
                                 hasProgress
+                                onPress={() => {bookListItemClickHandler(itemData.index)}}
                             />
                         )}
                         horizontal={true}
@@ -81,6 +90,7 @@ const HomeScreen = (props) => {
                                 title={itemData.item.title}
                                 author={itemData.item.author}
                                 imageUri={itemData.item.imageUri}
+                                onPress={() => {bookListItemClickHandler(itemData.index)}}
                             />
                         )}
                         horizontal={true}
@@ -98,6 +108,8 @@ const HomeScreen = (props) => {
                                 title={itemData.item.title}
                                 author={itemData.item.author}
                                 imageUri={itemData.item.imageUri}
+                                onPress={() => {}}
+                                onPress={() => {bookListItemClickHandler(itemData.index)}}
                             />
                         )}
                         horizontal={true}

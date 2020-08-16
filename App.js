@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createStore, combineReducers, applyMiddleware } from "redux";
 import { Provider } from "react-redux";
 import ReduxThunk from "redux-thunk";
@@ -23,7 +23,6 @@ const fetchFonts = () => {
     'poppins-medium': require('./assets/fonts/Poppins-Medium.otf'),
   });
 }
-
 
 export default function App() {
   const [dataLoaded, setDataLoaded] = useState(false);

@@ -1,3 +1,4 @@
+import { AsyncStorage } from "react-native";
 import { CONFIG } from "../../constants/Config";
 import axios from "axios";
 
@@ -22,34 +23,37 @@ export const signUp = (email, password, username) => {
             )
             .then((response) => {
                 console.log(response.data);
-                axios.post(
-                    `${CONFIG.firebase}/users/${response.data.localId}.json?auth=${response.data.idToken}`,
-                    JSON.stringify({
-                        username: username,
-                        numberOfBooks: 0,
-                    }),
-                    {
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                    }
-                )
-                .then(addUser => {
-                    console.log('--------------------------------------------------------------');
-                    console.log(addUser.data);
-                    dispatch({
-                        type: SIGNUP,
-                        userData: {
-                            token: response.data.idToken,
-                            userId: response.data.localId,
+                axios
+                    .post(
+                        `${CONFIG.firebase}/users/${response.data.localId}.json?auth=${response.data.idToken}`,
+                        JSON.stringify({
                             username: username,
-                            email: response.data.email
+                            numberOfBooks: 0,
+                        }),
+                        {
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
                         }
+                    )
+                    .then((addUser) => {
+                        console.log(
+                            "--------------------------------------------------------------"
+                        );
+                        console.log(addUser.data);
+                        dispatch({
+                            type: SIGNUP,
+                            userData: {
+                                token: response.data.idToken,
+                                userId: response.data.localId,
+                                username: username,
+                                email: response.data.email,
+                            },
+                        });
                     })
-                })
-                .catch(error => {
-                    console.log(error);
-                });
+                    .catch((error) => {
+                        console.log(error);
+                    });
             })
             .catch((error) => {
                 console.log(error.response);
@@ -75,22 +79,37 @@ export const login = (email, password) => {
             )
             .then((res) => {
                 console.log(res.data);
-                axios.get(`${CONFIG.firebase}/users/${res.data.localId}.json?auth=${res.data.idToken}`)
-                .then(response => {
-                    const userInfos = response.data[Object.keys(response.data)[0]];
-                    console.log(userInfos);
+                axios
+                    .get(
+                        `${CONFIG.firebase}/users/${res.data.localId}.json?auth=${res.data.idToken}`
+                    )
+                    .then((response) => {
+                        const userInfos = response.data[Object.keys(response.data)[0]];
+                        console.log(userInfos);
 
-                    dispatch({
-                        type: LOGIN,
-                        userData: {
-                            email: res.data.email,
-                            token: res.data.idToken,
-                            userId: res.data.localId,
-                            username: userInfos.username
-                        },
-                    });
-                })
-                .catch(error => console.log(error));
+                        dispatch({
+                            type: LOGIN,
+                            userData: {
+                                email: res.data.email,
+                                token: res.data.idToken,
+                                userId: res.data.localId,
+                                username: userInfos.username,
+                            },
+                        });
+
+                        AsyncStorage.setItem(
+                            "userData",
+                            JSON.stringify({
+                                token: res.data.idToken,
+                                userId: res.data.localId,
+                                refreshToken: res.data.refreshToken,
+                                expiration: new Date(
+                                    new Date().getTime() + +res.data.expiresIn * 1000
+                                ).toISOString(),
+                            })
+                        );
+                    })
+                    .catch((error) => console.log(error));
             })
             .catch((error) => {
                 console.log(error);

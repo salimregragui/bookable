@@ -1,14 +1,174 @@
-import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import React from "react";
+import { StyleSheet, Text, View, Image, ScrollView } from "react-native";
+import Header from "../components/UI/Header";
+import { Colors } from "../constants/Colors";
+import Button from "../components/UI/Button";
+import { Ionicons } from "@expo/vector-icons";
 
-const BookDetailsScreen = () => {
+const BookDetailsScreen = (props) => {
+    const bookInfos = props.route.params.bookInfos;
     return (
-        <View>
-            <Text></Text>
-        </View>
-    )
-}
+        <ScrollView style={styles.bookDetails}>
+            <Header title={bookInfos.title} navigation={props.navigation} isNotMenu />
 
-export default BookDetailsScreen
+            <View style={styles.imageContainer}>
+                <View style={styles.shadowImage}>
+                    <Image style={styles.image} source={{ uri: bookInfos.imageUri }} />
+                </View>
+            </View>
 
-const styles = StyleSheet.create({})
+            <View style={styles.infosContainer}>
+                <Text style={styles.title}>{bookInfos.title}</Text>
+                <Text style={styles.author}>{bookInfos.author}</Text>
+            </View>
+
+            <View style={styles.technicalInfos}>
+                <View style={styles.technicalInfo}>
+                    <Text style={styles.technicalInfoName}>Rating</Text>
+                    <Text style={styles.technicalInfoContent}>4.1</Text>
+                </View>
+                <View style={styles.technicalInfo}>
+                    <Text style={styles.technicalInfoName}>Number Of Pages</Text>
+                    <Text style={styles.technicalInfoContent}>247</Text>
+                </View>
+                <View style={styles.technicalInfo}>
+                    <Text style={styles.technicalInfoName}>Readers</Text>
+                    <Text style={styles.technicalInfoContent}>1287</Text>
+                </View>
+            </View>
+            <View style={styles.bookDescription}>
+                <Text style={styles.bookDescriptionText}>
+                    Praesent vestibulum dapibus nibh. Aenean leo ligula, porttitor eu, consequat
+                    vitae, eleifend ac, enim. Nullam sagittis. Suspendisse pulvinar, augue ac
+                    venenatis condimentum, sem libero volutpat nibh, nec pellentesque velit pede
+                    quis nunc.
+                </Text>
+            </View>
+
+            <View style={styles.buttonsContainer}>
+                <Button
+                    style={styles.shareButton}
+                    styleText={styles.shareButtonText}
+                    onPress={() => {
+                        
+                    }}
+                    withIcon={<Ionicons name="md-share" size={16} color='white' />}
+                >
+                    Share
+                </Button>
+
+                <Button
+                    style={styles.addButton}
+                    styleText={styles.addButtonText}
+                    onPress={() => {
+                        
+                    }}
+                >
+                    ADD TO FUTURE READS
+                </Button>
+            </View>
+        </ScrollView>
+    );
+};
+
+const styles = StyleSheet.create({
+    bookDetails: {
+        flex: 1,
+    },
+    imageContainer: {
+        width: "100%",
+        height: 220,
+        justifyContent: "center",
+        flexDirection: "row",
+    },
+    image: {
+        width: "100%",
+        height: "100%",
+        borderRadius: 5,
+    },
+    shadowImage: {
+        shadowOffset: { width: 10, height: 10 },
+        shadowColor: "#000",
+        shadowOpacity: 1,
+        elevation: 8,
+        backgroundColor: "#000",
+        width: 140,
+        height: 220,
+        borderRadius: 5,
+    },
+    infosContainer: {
+        margin: 20,
+    },
+    title: {
+        fontFamily: "poppins-bold",
+        fontSize: 18,
+        color: Colors.lightTheme.primaryColor,
+    },
+    author: {
+        fontFamily: "poppins-medium",
+        fontSize: 14,
+        color: Colors.lightTheme.grey,
+    },
+    technicalInfos: {
+        width: "90%",
+        height: 80,
+        backgroundColor: "#e3e3e9",
+        borderRadius: 5,
+        marginHorizontal: 20,
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+    },
+    technicalInfo: {
+        marginHorizontal: 20,
+        alignItems: "center",
+    },
+    technicalInfoName: {
+        fontFamily: "poppins-medium",
+        fontSize: 12,
+        color: Colors.lightTheme.primaryColor,
+        marginTop: 6,
+    },
+    technicalInfoContent: {
+        fontFamily: "poppins-bold",
+        fontSize: 12,
+        color: "white",
+    },
+    bookDescription: {
+        width: "90%",
+        marginHorizontal: 20,
+        marginTop: 20,
+        marginBottom: 50
+    },
+    bookDescriptionText: {
+        fontFamily: "poppins",
+        fontSize: 14,
+        color: Colors.lightTheme.grey,
+    },
+    buttonsContainer: {
+        flexDirection: 'row',
+        width: '90%',
+        marginLeft: 20,
+        justifyContent: 'space-between',
+        marginBottom: 20,
+    },
+    shareButton: {
+        width: 'auto',
+        paddingHorizontal: 10,
+        backgroundColor: Colors.lightTheme.primaryColor
+    },
+    shareButtonText: {
+        fontFamily: 'poppins-bold',
+        fontSize: 12
+    },
+    addButton: {
+        width: 'auto',
+        paddingHorizontal: 10
+    },
+    addButtonText: {
+        fontFamily: 'poppins-bold',
+        fontSize: 12
+    }
+});
+
+export default BookDetailsScreen;

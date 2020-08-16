@@ -5,13 +5,15 @@ import { Colors } from "../constants/Colors";
 const BooksListItem = (props) => {
     return (
         <View style={styles.BooksListItem}>
-            <TouchableOpacity activeOpacity={0.8}>
-                <Image
-                    style={styles.image}
-                    source={{
-                        uri: props.imageUri,
-                    }}
-                />
+            <TouchableOpacity activeOpacity={0.8} onPress={props.onPress}>
+                <View style={styles.imageContainer}>
+                    <Image
+                        style={styles.image}
+                        source={{
+                            uri: props.imageUri,
+                        }}
+                    />
+                </View>
             </TouchableOpacity>
 
             <View style={styles.BookInfos}>
@@ -33,10 +35,19 @@ const styles = StyleSheet.create({
         height: 250,
  
     },
-    image: {
+    imageContainer: {
         width: 120,
         height: 180,
-        borderRadius: 5
+        borderRadius: 5,
+        shadowOffset: { width: 10, height: 10 },
+        shadowColor: "#000",
+        shadowOpacity: 1,
+        elevation: 8,
+    },  
+    image: {
+        width: '100%',
+        height: '100%',
+        borderRadius: 5,
     },
     title: {
         fontFamily: 'poppins-bold',

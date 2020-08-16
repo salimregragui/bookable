@@ -19,7 +19,8 @@ const Button = (props) => {
     return (
         <TouchableCmp activeOpacity={0.8} onPress={props.onPress}>
             <View style={{...styles.button, ...props.style}}>
-                <Text style={{...styles.text, ...props.styleText}}>{props.children}</Text>
+                {props.withIcon ? <Text style={styles.iconStyle}>{props.withIcon}</Text> : null}
+                <Text style={{...styles.text, ...props.styleText, marginTop: props.withIcon ? 3 : 0}}>{props.children}</Text>
             </View>
         </TouchableCmp>
     );
@@ -33,12 +34,16 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: Colors.lightTheme.secondaryColor,
         borderRadius: 5,
-        marginVertical: 15
+        marginVertical: 15,
+        flexDirection: 'row',
     },
     text: {
         fontFamily: 'poppins-medium',
         fontSize: 14,
-        color: 'white'
+        color: 'white',
+    },
+    iconStyle: {
+        marginRight: 10
     }
 });
 
