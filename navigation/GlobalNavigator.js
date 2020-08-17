@@ -17,6 +17,9 @@ import FavoritesScreen from "../screens/profile/FavoritesScreen";
 import CurrentlyReadingScreen from "../screens/profile/CurrentlyReadingScreen";
 
 import SearchScreen from '../screens/search/SearchScreen';
+import ResultScreen from '../screens/search/ResultScreen';
+import RecentSearchesScreen from '../screens/search/RecentSearchesScreen';
+import LastCommunitySearchesScreen from '../screens/search/LastCommunitySearchesScreen';
 
 const AuthNavigatorStack = createStackNavigator();
 const HomeNavigatorStack = createStackNavigator();
@@ -102,6 +105,9 @@ function SearchNavigator() {
             mode="card"
         >
             <SearchNavigatorStack.Screen name="Search" component={SearchScreen} />
+            <SearchNavigatorStack.Screen name="Result" component={ResultScreen} />
+            <SearchNavigatorStack.Screen name="LastCommunity" component={LastCommunitySearchesScreen} />
+            <SearchNavigatorStack.Screen name="Recent" component={RecentSearchesScreen} />
             <SearchNavigatorStack.Screen name="BookDetails" component={BookDetailsScreen} />
         </SearchNavigatorStack.Navigator>
     );

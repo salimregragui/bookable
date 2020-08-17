@@ -1,10 +1,10 @@
 import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
-const LastCommunitySearchesScreen = () => {
+const LastCommunitySearchesScreen = (props) => {
     return (
         <View>
-            <Text></Text>
+            <Text>Last community searches</Text>
         </View>
     )
 }

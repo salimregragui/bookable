@@ -36,7 +36,7 @@ const Header = (props) => {
         <View style={{...styles.Header, marginTop: props.marginTop ? props.marginTop : 30}}>
             <View style={styles.headerLeftStyle}>
                 {headerLeft}
-                <Text style={styles.title}>{props.title}</Text>
+                <Text style={styles.title} numberOfLines={1}>{props.title}</Text>
             </View>
 
             <View style={styles.image}>
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
     },
     headerLeftStyle: {
         flexDirection: "row",
-        width: "80%",
+        width: "60%",
         height: "100%",
         alignItems: "center",
     },

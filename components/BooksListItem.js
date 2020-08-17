@@ -9,16 +9,16 @@ const BooksListItem = (props) => {
                 <View style={props.isVertical ? styles.imageContainerVertical : styles.imageContainer}>
                     <Image
                         style={styles.image}
-                        source={{
+                        source={props.imageUri ? {
                             uri: props.imageUri,
-                        }}
+                        } : require('../assets/book-cover.png')}
                     />
                 </View>
             </TouchableOpacity>
 
             <View style={styles.bookInfos}>
-                <Text style={styles.title}>{props.title}</Text>
-                <Text style={styles.author}>{props.author}</Text>
+                <Text style={styles.title} numberOfLines={1}>{props.title}</Text>
+                <Text style={styles.author} numberOfLines={1}>{props.author}</Text>
             </View>
 
             {props.hasProgress ? <View style={styles.progressBar}>

@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import { StyleSheet, View, FlatList, ScrollView, TouchableOpacity, Text } from "react-native";
+import { useSelector } from "react-redux";
 import { Modalize } from "react-native-modalize";
 import { AntDesign } from "@expo/vector-icons";
 
@@ -18,6 +19,25 @@ const FilterItem = (props) => {
                 <Text style={props.active ? styles.filterItemActiveText : styles.filterItemText}>
                     {props.name}
                 </Text>
+            </View>
+        </TouchableOpacity>
+    );
+};
+
+const SearchItem = (props) => {
+    return (
+        <TouchableOpacity activeOpacity={0.4} onPress={props.onPress}>
+            <View style={styles.searchItem}>
+                <TouchableOpacity activeOpacity={0.4} onPress={props.onDelete}>
+                    <View style={styles.delete}>
+                        <AntDesign
+                            name="minuscircleo"
+                            size={24}
+                            color={Colors.lightTheme.secondaryColor}
+                        />
+                    </View>
+                </TouchableOpacity>
+                <Text style={styles.searchItemText}>{props.name}</Text>
             </View>
         </TouchableOpacity>
     );
@@ -65,7 +85,33 @@ const SearchScreen = (props) => {
         },
     ];
 
+    const dataSearch = [
+        {
+            id: "Harry Potter",
+        },
+        {
+            id: "Lord Of The Ring",
+        },
+        {
+            id: "It Stephen King",
+        },
+        {
+            id: "Cooking Book",
+        },
+        {
+            id: "Game Of Thrones",
+        },
+        {
+            id: "Design",
+        },
+        {
+            id: "UX",
+        },
+    ];
+
     const [search, setSearch] = useState("");
+    const [recentSearches, setRecentSearches] = useState(dataSearch);
+    const [searchTimeOut, setSearchTimeOut] = useState();
     const [filters, setFilters] = useState([
         {
             id: "Author",
@@ -100,14 +146,20 @@ const SearchScreen = (props) => {
     const searchChangeHandler = (text) => {
         setSearch(text);
 
-        if (text.trim() !== "") {
-            const newData = data.filter((book) => {
-                return book.title.toLowerCase().includes(text.toLowerCase().trim());
-            });
+        if (searchTimeOut) {
+            clearTimeout(searchTimeOut);
+        }
 
-            setDoctoredData(newData);
-        } else {
-            setDoctoredData(data);
+        if (text.trim() !== "") {
+            setSearchTimeOut(
+                setTimeout(() => {
+                    setSearchTimeOut(null);
+                    props.navigation.navigate("Result", {
+                        query: text.trim(),
+                    });
+                    console.log(text + "Search");
+                }, 1000)
+            );
         }
     };
 
@@ -127,27 +179,34 @@ const SearchScreen = (props) => {
 
     const selectAllFiltersHandler = () => {
         let newFilters = [...filters];
-        newFilters = newFilters.map(filter => {
+        newFilters = newFilters.map((filter) => {
             return {
                 id: filter.id,
-                selected: true
-            }
+                selected: true,
+            };
         });
 
         setFilters(newFilters);
-    }
+    };
 
     const clearAllFiltersHandler = () => {
         let newFilters = [...filters];
-        newFilters = newFilters.map(filter => {
+        newFilters = newFilters.map((filter) => {
             return {
                 id: filter.id,
-                selected: false
-            }
+                selected: false,
+            };
         });
 
         setFilters(newFilters);
-    }
+    };
+
+    const deleteRecentSearchHandler = (id) => {
+        let newSearches = [...recentSearches];
+        newSearches.splice(id, 1);
+
+        setRecentSearches(newSearches);
+    };
 
     const modalizeRef = useRef(Modalize);
 
@@ -155,27 +214,41 @@ const SearchScreen = (props) => {
         modalizeRef.current?.open();
     };
 
-    return (
-        <ScrollView style={styles.search}>
-            <Header title="Search" navigation={props.navigation} />
-            <View style={styles.searchBarContainer}>
-                <Input
-                    placeholder="Search Here..."
-                    placeholderTextColor={Colors.lightTheme.grey}
-                    value={search}
-                    onChangeText={searchChangeHandler}
-                    autoCapitalize="none"
-                    withIcon
-                    iconName="ios-search"
-                    style={styles.inputStyle}
-                />
-
-                <Button style={styles.filters} onPress={onOpen}>
-                    <AntDesign name="filter" size={24} color={Colors.lightTheme.secondaryColor} />
-                </Button>
+    let recentSearchesContent = (
+        <View>
+            <TitleBar
+                title="Your Recent Searches"
+                hasRight
+                rightText="See All"
+                rightClick={() => {
+                    props.navigation.navigate("Recent");
+                }}
+            />
+            <View style={styles.recentSearchesContainer}>
+                {recentSearches.map((search, index) => {
+                    return (
+                        <SearchItem
+                            key={search.id}
+                            name={search.id}
+                            onPress={() => {}}
+                            onDelete={() => {
+                                console.log(index);
+                                deleteRecentSearchHandler(index);
+                            }}
+                        />
+                    );
+                })}
             </View>
+        </View>
+    );
 
-            <Modalize ref={modalizeRef} modalHeight={400}>
+    if (recentSearches.length === 0) {
+        recentSearchesContent = null;
+    }
+
+    return (
+        <View style={styles.searchContainer}>
+            <Modalize ref={modalizeRef} adjustToContentHeight>
                 <View style={styles.filterModal}>
                     <Text style={styles.filterTitle}>Filters</Text>
                     <Text style={styles.filterSubTitle}>
@@ -217,62 +290,88 @@ const SearchScreen = (props) => {
                 </View>
             </Modalize>
 
-            <View style={styles.content}>
-                <TitleBar
-                    title="Popular Searches"
-                    hasRight
-                    rightText="All"
-                    rightClick={() => {
-                        props.navigation.navigate("CurrentlyReading");
-                    }}
-                />
-                <View style={styles.flatListContainer}>
-                    <FlatList
-                        style={styles.bookList}
-                        showsHorizontalScrollIndicator={false}
-                        data={data}
-                        renderItem={(itemData) => (
-                            <BookListItem
-                                title={itemData.item.title}
-                                author={itemData.item.author}
-                                imageUri={itemData.item.imageUri}
-                                onPress={() => {
-                                    bookListItemClickHandler(itemData.index);
-                                }}
-                            />
-                        )}
-                        horizontal={true}
+            <ScrollView style={styles.search}>
+                <Header title="Search" navigation={props.navigation} marginTop={5}/>
+                <View style={styles.searchBarContainer}>
+                    <Input
+                        placeholder="Search Here..."
+                        placeholderTextColor={Colors.lightTheme.grey}
+                        value={search}
+                        onChangeText={searchChangeHandler}
+                        autoCapitalize="none"
+                        withIcon
+                        iconName="ios-search"
+                        style={styles.inputStyle}
                     />
+
+                    <Button style={styles.filters} onPress={onOpen}>
+                        <AntDesign
+                            name="filter"
+                            size={24}
+                            color={Colors.lightTheme.secondaryColor}
+                        />
+                    </Button>
                 </View>
 
-                <TitleBar
-                    title="Last Community Searches"
-                    hasRight
-                    rightText="More"
-                    rightClick={() => {
-                        props.navigation.navigate("CurrentlyReading");
-                    }}
-                />
-                <View style={styles.flatListContainer}>
-                    <FlatList
-                        style={styles.bookList}
-                        showsHorizontalScrollIndicator={false}
-                        data={data}
-                        renderItem={(itemData) => (
-                            <BookListItem
-                                title={itemData.item.title}
-                                author={itemData.item.author}
-                                imageUri={itemData.item.imageUri}
-                                onPress={() => {
-                                    bookListItemClickHandler(itemData.index);
-                                }}
-                            />
-                        )}
-                        horizontal={true}
+                <View style={styles.content}>
+                    <TitleBar
+                        title="Popular Searches"
+                        hasRight
+                        rightText="All"
+                        rightClick={() => {
+                            props.navigation.navigate("CurrentlyReading");
+                        }}
                     />
+                    <View style={styles.flatListContainer}>
+                        <FlatList
+                            style={styles.bookList}
+                            showsHorizontalScrollIndicator={false}
+                            data={data}
+                            renderItem={(itemData) => (
+                                <BookListItem
+                                    title={itemData.item.title}
+                                    author={itemData.item.author}
+                                    imageUri={itemData.item.imageUri}
+                                    onPress={() => {
+                                        bookListItemClickHandler(itemData.index);
+                                    }}
+                                />
+                            )}
+                            horizontal={true}
+                        />
+                    </View>
+
+                    {recentSearchesContent}
+
+                    <TitleBar
+                        title="Last Community Searches"
+                        hasRight
+                        rightText="More"
+                        rightClick={() => {
+                            props.navigation.navigate("LastCommunity");
+                        }}
+                    />
+                    <View style={styles.flatListContainer}>
+                        <FlatList
+                            style={styles.bookList}
+                            showsHorizontalScrollIndicator={false}
+                            data={data}
+                            renderItem={(itemData) => (
+                                <BookListItem
+                                    title={itemData.item.title}
+                                    author={itemData.item.author}
+                                    imageUri={itemData.item.imageUri}
+                                    onPress={() => {
+                                        bookListItemClickHandler(itemData.index);
+                                    }}
+                                />
+                            )}
+                            horizontal={true}
+                        />
+                    </View>
                 </View>
-            </View>
-        </ScrollView>
+            </ScrollView>
+        </View>
     );
 };
 
@@ -366,10 +465,40 @@ const styles = StyleSheet.create({
         width: "auto",
         height: "auto",
         backgroundColor: "white",
-        marginRight: 20
+        marginRight: 20,
     },
     actionButtonText: {
-        color: Colors.lightTheme.primaryColor
+        color: Colors.lightTheme.primaryColor,
+    },
+    searchItem: {
+        borderWidth: 1,
+        borderColor: Colors.lightTheme.secondaryColor,
+        borderRadius: 5,
+        marginRight: 10,
+        marginBottom: 15,
+        width: "auto",
+        height: 40,
+        alignItems: "center",
+        justifyContent: "center",
+        flexDirection: "row",
+        paddingHorizontal: 10,
+    },
+    searchItemText: {
+        fontFamily: "poppins-medium",
+        color: Colors.lightTheme.secondaryColor,
+        marginTop: 5,
+    },
+    recentSearchesContainer: {
+        flex: 1,
+        flexDirection: "row",
+        flexWrap: "wrap",
+    },
+    delete: {
+        marginRight: 10,
+    },
+    searchContainer: {
+        flex: 1,
+        marginTop: 25
     }
 });
 

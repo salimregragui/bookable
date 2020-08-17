@@ -9,9 +9,11 @@ import { AppLoading } from 'expo';
 
 import GlobalNavigator from './navigation/GlobalNavigator';
 import AuthReducer from './store/reducers/auth';
+import SearchReducer from './store/reducers/search';
 
 const rootReducer = combineReducers({
     auth: AuthReducer,
+    search: SearchReducer
 });
 
 const store = createStore(rootReducer, applyMiddleware(ReduxThunk));

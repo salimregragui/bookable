@@ -1,25 +1,64 @@
-import React from "react";
-import { StyleSheet, Text, View, Image, ScrollView } from "react-native";
+import React, { useEffect, useState } from "react";
+import { StyleSheet, Text, View, Image, ScrollView, ActivityIndicator } from "react-native";
+import axios from "axios";
 import Header from "../components/UI/Header";
 import { Colors } from "../constants/Colors";
 import Button from "../components/UI/Button";
 import { Ionicons } from "@expo/vector-icons";
 
 const BookDetailsScreen = (props) => {
-    const bookInfos = props.route.params.bookInfos;
+    const [bookInfos, setBookInfos] = useState();
+
+    useEffect(() => {
+        if (props.route.params.bookId) {
+            axios
+                .get(`https://www.googleapis.com/books/v1/volumes/${props.route.params.bookId}`)
+                .then((response) => {
+                    setBookInfos(response.data);
+                    console.log(response.data);
+                })
+                .catch((error) => console.log(error));
+            console.log("Heeey !");
+        } else {
+            setBookInfos(props.route.params.bookInfos);
+        }
+    }, []);
+
+    if (!bookInfos) {
+        return (
+            <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                <ActivityIndicator color="#b1b1b1" size="large" />
+            </View>
+        );
+    }
+
     return (
         <ScrollView style={styles.bookDetails}>
-            <Header title={bookInfos.title} navigation={props.navigation} isNotMenu />
+            <Header
+                title={bookInfos.volumeInfo.title}
+                navigation={props.navigation}
+                isNotMenu
+                marginTop={5}
+            />
 
             <View style={styles.imageContainer}>
                 <View style={styles.shadowImage}>
-                    <Image style={styles.image} source={{ uri: bookInfos.imageUri }} />
+                    <Image
+                        style={styles.image}
+                        source={
+                            bookInfos.volumeInfo.imageLinks
+                                ? { uri: bookInfos.volumeInfo.imageLinks.thumbnail }
+                                : require("../assets/book-cover.png")
+                        }
+                    />
                 </View>
             </View>
 
             <View style={styles.infosContainer}>
-                <Text style={styles.title}>{bookInfos.title}</Text>
-                <Text style={styles.author}>{bookInfos.author}</Text>
+                <Text style={styles.title}>{bookInfos.volumeInfo.title}</Text>
+                <Text style={styles.author}>
+                    {bookInfos.volumeInfo.authors ? bookInfos.volumeInfo.authors[0] : "No Author"}
+                </Text>
             </View>
 
             <View style={styles.technicalInfos}>
@@ -29,7 +68,9 @@ const BookDetailsScreen = (props) => {
                 </View>
                 <View style={styles.technicalInfo}>
                     <Text style={styles.technicalInfoName}>Number Of Pages</Text>
-                    <Text style={styles.technicalInfoContent}>247</Text>
+                    <Text style={styles.technicalInfoContent}>
+                        {bookInfos.volumeInfo.pageCount}
+                    </Text>
                 </View>
                 <View style={styles.technicalInfo}>
                     <Text style={styles.technicalInfoName}>Readers</Text>
@@ -37,22 +78,15 @@ const BookDetailsScreen = (props) => {
                 </View>
             </View>
             <View style={styles.bookDescription}>
-                <Text style={styles.bookDescriptionText}>
-                    Praesent vestibulum dapibus nibh. Aenean leo ligula, porttitor eu, consequat
-                    vitae, eleifend ac, enim. Nullam sagittis. Suspendisse pulvinar, augue ac
-                    venenatis condimentum, sem libero volutpat nibh, nec pellentesque velit pede
-                    quis nunc.
-                </Text>
+                <Text style={styles.bookDescriptionText}>{bookInfos.volumeInfo.description}</Text>
             </View>
 
             <View style={styles.buttonsContainer}>
                 <Button
                     style={styles.shareButton}
                     styleText={styles.shareButtonText}
-                    onPress={() => {
-                        
-                    }}
-                    withIcon={<Ionicons name="md-share" size={16} color='white' />}
+                    onPress={() => {}}
+                    withIcon={<Ionicons name="md-share" size={16} color="white" />}
                 >
                     Share
                 </Button>
@@ -60,9 +94,7 @@ const BookDetailsScreen = (props) => {
                 <Button
                     style={styles.addButton}
                     styleText={styles.addButtonText}
-                    onPress={() => {
-                        
-                    }}
+                    onPress={() => {}}
                 >
                     ADD TO FUTURE READS
                 </Button>
@@ -74,6 +106,7 @@ const BookDetailsScreen = (props) => {
 const styles = StyleSheet.create({
     bookDetails: {
         flex: 1,
+        marginTop: 25,
     },
     imageContainer: {
         width: "100%",
@@ -138,7 +171,7 @@ const styles = StyleSheet.create({
         width: "90%",
         marginHorizontal: 20,
         marginTop: 20,
-        marginBottom: 50
+        marginBottom: 50,
     },
     bookDescriptionText: {
         fontFamily: "poppins",
@@ -146,29 +179,29 @@ const styles = StyleSheet.create({
         color: Colors.lightTheme.grey,
     },
     buttonsContainer: {
-        flexDirection: 'row',
-        width: '90%',
+        flexDirection: "row",
+        width: "90%",
         marginLeft: 20,
-        justifyContent: 'space-between',
+        justifyContent: "space-between",
         marginBottom: 20,
     },
     shareButton: {
-        width: 'auto',
+        width: "auto",
         paddingHorizontal: 10,
-        backgroundColor: Colors.lightTheme.primaryColor
+        backgroundColor: Colors.lightTheme.primaryColor,
     },
     shareButtonText: {
-        fontFamily: 'poppins-bold',
-        fontSize: 12
+        fontFamily: "poppins-bold",
+        fontSize: 12,
     },
     addButton: {
-        width: 'auto',
-        paddingHorizontal: 10
+        width: "auto",
+        paddingHorizontal: 10,
     },
     addButtonText: {
-        fontFamily: 'poppins-bold',
-        fontSize: 12
-    }
+        fontFamily: "poppins-bold",
+        fontSize: 12,
+    },
 });
 
 export default BookDetailsScreen;
