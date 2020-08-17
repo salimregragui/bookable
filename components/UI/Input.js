@@ -8,7 +8,7 @@ const Input = (props) => {
 
     if (props.withIcon) {
         inputToReturn = (
-            <View style={styles.search}>
+            <View style={{ ...styles.search, ...props.style }}>
                 <Text style={styles.searchIcon}>
                     <Ionicons name={props.iconName} size={24} color={Colors.lightTheme.grey} />
                 </Text>

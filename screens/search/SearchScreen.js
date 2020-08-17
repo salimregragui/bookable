@@ -1,10 +1,27 @@
-import React, { useState } from "react";
-import { StyleSheet, View, FlatList, ScrollView } from "react-native";
-import Header from "../../components/UI/Header";
+import React, { useState, useRef } from "react";
+import { StyleSheet, View, FlatList, ScrollView, TouchableOpacity, Text } from "react-native";
+import { Modalize } from "react-native-modalize";
+import { AntDesign } from "@expo/vector-icons";
+
 import { Colors } from "../../constants/Colors";
+
+import Header from "../../components/UI/Header";
 import BookListItem from "../../components/BooksListItem";
 import Input from "../../components/UI/Input";
 import TitleBar from "../../components/UI/TitleBar";
+import Button from "../../components/UI/Button";
+
+const FilterItem = (props) => {
+    return (
+        <TouchableOpacity activeOpacity={0.4} onPress={props.onPress}>
+            <View style={props.active ? styles.filterItemActive : styles.filterItem}>
+                <Text style={props.active ? styles.filterItemActiveText : styles.filterItemText}>
+                    {props.name}
+                </Text>
+            </View>
+        </TouchableOpacity>
+    );
+};
 
 const SearchScreen = (props) => {
     const data = [
@@ -49,6 +66,36 @@ const SearchScreen = (props) => {
     ];
 
     const [search, setSearch] = useState("");
+    const [filters, setFilters] = useState([
+        {
+            id: "Author",
+            selected: false,
+        },
+        {
+            id: "Title",
+            selected: false,
+        },
+        {
+            id: "ISBN",
+            selected: false,
+        },
+        {
+            id: "Publisher",
+            selected: false,
+        },
+        {
+            id: "Category",
+            selected: false,
+        },
+        {
+            id: "LCCN",
+            selected: false,
+        },
+        {
+            id: "OCLN",
+            selected: false,
+        },
+    ]);
 
     const searchChangeHandler = (text) => {
         setSearch(text);
@@ -70,6 +117,44 @@ const SearchScreen = (props) => {
         });
     };
 
+    const handleFilterChange = (id) => {
+        let newFilters = [...filters];
+        let filterToChange = newFilters[id];
+        filterToChange.selected = !filterToChange.selected;
+
+        setFilters(newFilters);
+    };
+
+    const selectAllFiltersHandler = () => {
+        let newFilters = [...filters];
+        newFilters = newFilters.map(filter => {
+            return {
+                id: filter.id,
+                selected: true
+            }
+        });
+
+        setFilters(newFilters);
+    }
+
+    const clearAllFiltersHandler = () => {
+        let newFilters = [...filters];
+        newFilters = newFilters.map(filter => {
+            return {
+                id: filter.id,
+                selected: false
+            }
+        });
+
+        setFilters(newFilters);
+    }
+
+    const modalizeRef = useRef(Modalize);
+
+    const onOpen = () => {
+        modalizeRef.current?.open();
+    };
+
     return (
         <ScrollView style={styles.search}>
             <Header title="Search" navigation={props.navigation} />
@@ -82,8 +167,55 @@ const SearchScreen = (props) => {
                     autoCapitalize="none"
                     withIcon
                     iconName="ios-search"
+                    style={styles.inputStyle}
                 />
+
+                <Button style={styles.filters} onPress={onOpen}>
+                    <AntDesign name="filter" size={24} color={Colors.lightTheme.secondaryColor} />
+                </Button>
             </View>
+
+            <Modalize ref={modalizeRef} modalHeight={400}>
+                <View style={styles.filterModal}>
+                    <Text style={styles.filterTitle}>Filters</Text>
+                    <Text style={styles.filterSubTitle}>
+                        Click on an item to filter by it. You can have multiple filters on your
+                        searches.
+                    </Text>
+
+                    <View style={styles.actionButtons}>
+                        <Button
+                            style={styles.actionButton}
+                            styleText={styles.actionButtonText}
+                            onPress={clearAllFiltersHandler}
+                        >
+                            Clear All
+                        </Button>
+                        <Button
+                            style={styles.actionButton}
+                            styleText={styles.actionButtonText}
+                            onPress={selectAllFiltersHandler}
+                        >
+                            Select All
+                        </Button>
+                    </View>
+
+                    <View style={styles.filtersContainer}>
+                        {filters.map((filter, index) => {
+                            return (
+                                <FilterItem
+                                    key={filter.id}
+                                    name={filter.id}
+                                    active={filter.selected}
+                                    onPress={() => {
+                                        handleFilterChange(index);
+                                    }}
+                                />
+                            );
+                        })}
+                    </View>
+                </View>
+            </Modalize>
 
             <View style={styles.content}>
                 <TitleBar
@@ -151,6 +283,7 @@ const styles = StyleSheet.create({
     searchBarContainer: {
         width: "90%",
         marginLeft: 20,
+        flexDirection: "row",
     },
     flatListContainer: {
         height: 250,
@@ -161,7 +294,82 @@ const styles = StyleSheet.create({
     },
     content: {
         marginLeft: 20,
-        marginTop: 20
+        marginTop: 20,
+    },
+    filters: {
+        width: 50,
+        height: 50,
+        backgroundColor: "white",
+        borderWidth: 1,
+        borderColor: Colors.lightTheme.secondaryColor,
+        marginLeft: 6,
+    },
+    inputStyle: {
+        width: "85%",
+    },
+    filterModal: {
+        margin: 20,
+    },
+    filterTitle: {
+        fontFamily: "poppins-bold",
+        color: Colors.lightTheme.primaryColor,
+        fontSize: 16,
+    },
+    filterSubTitle: {
+        fontFamily: "poppins-medium",
+        color: Colors.lightTheme.grey,
+        fontSize: 12,
+    },
+    filterItem: {
+        borderWidth: 1,
+        borderColor: Colors.lightTheme.secondaryColor,
+        borderRadius: 5,
+        marginRight: 10,
+        marginBottom: 15,
+        width: 110,
+        height: 40,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    filterItemText: {
+        fontFamily: "poppins-medium",
+        color: Colors.lightTheme.secondaryColor,
+        marginTop: 5,
+    },
+    filterItemActive: {
+        borderWidth: 1,
+        borderColor: Colors.lightTheme.secondaryColor,
+        backgroundColor: Colors.lightTheme.secondaryColor,
+        borderRadius: 5,
+        marginRight: 10,
+        marginBottom: 15,
+        width: 110,
+        height: 40,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    filterItemActiveText: {
+        fontFamily: "poppins-medium",
+        color: "white",
+        marginTop: 5,
+    },
+    filtersContainer: {
+        flex: 1,
+        flexDirection: "row",
+        flexWrap: "wrap",
+    },
+    actionButtons: {
+        flexDirection: "row",
+        marginBottom: 10,
+    },
+    actionButton: {
+        width: "auto",
+        height: "auto",
+        backgroundColor: "white",
+        marginRight: 20
+    },
+    actionButtonText: {
+        color: Colors.lightTheme.primaryColor
     }
 });
 
