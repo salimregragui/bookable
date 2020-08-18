@@ -1,6 +1,14 @@
-import React, { useState, useRef } from "react";
-import { StyleSheet, View, FlatList, ScrollView, TouchableOpacity, Text } from "react-native";
-import { useSelector } from "react-redux";
+import React, { useState, useRef, useEffect } from "react";
+import {
+    StyleSheet,
+    View,
+    FlatList,
+    ScrollView,
+    TouchableOpacity,
+    Text,
+    AsyncStorage,
+} from "react-native";
+import { useSelector, useDispatch } from "react-redux";
 import { Modalize } from "react-native-modalize";
 import { AntDesign } from "@expo/vector-icons";
 
@@ -11,6 +19,8 @@ import BookListItem from "../../components/BooksListItem";
 import Input from "../../components/UI/Input";
 import TitleBar from "../../components/UI/TitleBar";
 import Button from "../../components/UI/Button";
+
+import * as searchActions from '../../store/actions/search';
 
 const FilterItem = (props) => {
     return (
@@ -85,32 +95,7 @@ const SearchScreen = (props) => {
         },
     ];
 
-    const dataSearch = [
-        {
-            id: "Harry Potter",
-        },
-        {
-            id: "Lord Of The Ring",
-        },
-        {
-            id: "It Stephen King",
-        },
-        {
-            id: "Cooking Book",
-        },
-        {
-            id: "Game Of Thrones",
-        },
-        {
-            id: "Design",
-        },
-        {
-            id: "UX",
-        },
-    ];
-
     const [search, setSearch] = useState("");
-    const [recentSearches, setRecentSearches] = useState(dataSearch);
     const [searchTimeOut, setSearchTimeOut] = useState();
     const [filters, setFilters] = useState([
         {
@@ -143,6 +128,14 @@ const SearchScreen = (props) => {
         },
     ]);
 
+    const recentSearches = useSelector(state => state.search.recentSearches);
+    
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(searchActions.getRecentSearches());
+    }, [dispatch])
+
     const searchChangeHandler = (text) => {
         setSearch(text);
 
@@ -154,10 +147,10 @@ const SearchScreen = (props) => {
             setSearchTimeOut(
                 setTimeout(() => {
                     setSearchTimeOut(null);
+                    setSearch('');
                     props.navigation.navigate("Result", {
                         query: text.trim(),
                     });
-                    console.log(text + "Search");
                 }, 1000)
             );
         }
@@ -214,36 +207,37 @@ const SearchScreen = (props) => {
         modalizeRef.current?.open();
     };
 
-    let recentSearchesContent = (
-        <View>
-            <TitleBar
-                title="Your Recent Searches"
-                hasRight
-                rightText="See All"
-                rightClick={() => {
-                    props.navigation.navigate("Recent");
-                }}
-            />
-            <View style={styles.recentSearchesContainer}>
-                {recentSearches.map((search, index) => {
-                    return (
-                        <SearchItem
-                            key={search.id}
-                            name={search.id}
-                            onPress={() => {}}
-                            onDelete={() => {
-                                console.log(index);
-                                deleteRecentSearchHandler(index);
-                            }}
-                        />
-                    );
-                })}
-            </View>
-        </View>
-    );
+    let recentSearchesContent = null;
 
-    if (recentSearches.length === 0) {
-        recentSearchesContent = null;
+    if (recentSearches) {
+        if (recentSearches.length > 0) {
+            recentSearchesContent = (
+                <View>
+                    <TitleBar
+                        title="Your Recent Searches"
+                        hasRight
+                        rightText="See All"
+                        rightClick={() => {
+                            props.navigation.navigate("Recent");
+                        }}
+                    />
+                    <View style={styles.recentSearchesContainer}>
+                        {recentSearches.map((search, index) => {
+                            return (
+                                <SearchItem
+                                    key={search.id}
+                                    name={search.id.split('~')[0]}
+                                    onPress={() => {}}
+                                    onDelete={() => {
+                                        deleteRecentSearchHandler(index);
+                                    }}
+                                />
+                            );
+                        })}
+                    </View>
+                </View>
+            );
+        }
     }
 
     return (
@@ -291,7 +285,7 @@ const SearchScreen = (props) => {
             </Modalize>
 
             <ScrollView style={styles.search}>
-                <Header title="Search" navigation={props.navigation} marginTop={5}/>
+                <Header title="Search" navigation={props.navigation} marginTop={5} />
                 <View style={styles.searchBarContainer}>
                     <Input
                         placeholder="Search Here..."
@@ -498,8 +492,8 @@ const styles = StyleSheet.create({
     },
     searchContainer: {
         flex: 1,
-        marginTop: 25
-    }
+        marginTop: 25,
+    },
 });
 
 export default SearchScreen;
